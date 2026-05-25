@@ -1,1 +1,1 @@
-I am just learning DSP.
+I am just learning the DSP.
