@@ -22,9 +22,9 @@ class SoundHelper:
         y (np.ndarray): Audio time series.
         sr (int): Sampling rate of the audio time series.
         """
-        y, sr = librosa.load(file_path, sr=sr)
+        y, sr_result = librosa.load(file_path, sr=sr)
 
-        return y, sr
+        return y, sr_result
     
     @staticmethod
     def get_duration(y: np.ndarray, sr: int) -> float:
