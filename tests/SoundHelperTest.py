@@ -39,6 +39,33 @@ class SoundHelperTest:
         assert hasattr(passport, "sample_rate"), "Sound passport should contain 'sample_rate'"
         assert hasattr(passport, "amplitude_range"), "Sound passport should contain 'amplitude_range'"
 
+    @staticmethod
+    def test_create_waveform(file_path: str):
+        y, sr = SoundHelper.load_sound(file_path)
+        max_points = 500
+        transpose = True
+        x_label = "234234 asdd"
+        y_label = "sdfdf 34"
+        title = "Test Waveform"
+        waveplot = SoundHelper.create_waveform_plot(
+            y, 
+            sr, 
+            show_plot=False,
+            max_points=max_points,
+            transpose=transpose,
+            title=title,
+            label_x=x_label,
+            label_y=y_label
+        )
+
+        assert waveplot is not None, "Waveform plot should not be None"
+        assert waveplot.sr == sr, "Waveform plot should have the correct sampling rate"
+        assert waveplot.max_samples == max_points, "Waveform plot should have the correct maximum samples"
+        assert waveplot.transpose == transpose, "Waveform plot should have the correct transpose attribute"
+        assert waveplot.ax.title.get_text() == title, "Waveform plot should have the correct title"
+        assert waveplot.ax.get_xlabel() == x_label, "Waveform plot should have the correct x-axis label"
+        assert waveplot.ax.get_ylabel() == y_label, "Waveform plot should have the correct y-axis label"
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run tests for SoundHelper class.")
 
@@ -54,11 +81,14 @@ if __name__ == "__main__":
     test_methods = {
         "test_load_sound": SoundHelperTest.test_load_sound, 
         "test_get_duration": SoundHelperTest.test_get_duration,
-        "test_get_sound_passport": SoundHelperTest.test_get_sound_passport
+        "test_get_sound_passport": SoundHelperTest.test_get_sound_passport,
+        "test_create_waveform": SoundHelperTest.test_create_waveform
     }
 
-    for test_name, test in test_methods.items():
-        print(f"Running {test.__name__}...")
+    total_tests = len(test_methods)
+
+    for i, (test_name, test) in enumerate(test_methods.items(), start=1):
+        print(f"({i}/{total_tests}) Running {test.__name__}...")
         
         m_start = time()
         test(file_path)
