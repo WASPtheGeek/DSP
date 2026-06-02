@@ -2,9 +2,9 @@ import argparse
 import os
 from time import time
 import numpy as np
-from src.dsp.models.SoundPassportModel import SoundPassport
-from src.dsp.helpers.sound import SoundHelper
-from tests.helpers.test_sound_helpers import create_simple_mock_sound
+from models.SoundPassportModel import SoundPassport
+from src.utils.sound_utils import SoundHelper
+from tests.utils.test_sound_utils import create_simple_mock_sound
 
 DURATION = 2.0
 SAMPLE_RATE = 22050

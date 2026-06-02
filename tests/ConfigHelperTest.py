@@ -1,4 +1,4 @@
-from src.dsp.helpers.config import ConfigHelper
+from src.utils.config_utils import ConfigHelper
 
 class ConfigHelperTest:
     @staticmethod

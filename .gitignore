@@ -1,7 +1,13 @@
 tests/data/*
 
+# Processed sounds might be large
+data/processed/*
+
 # Ignore pycache and other Python artifacts
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+*.odt
+*.odt#

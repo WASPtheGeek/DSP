@@ -4,11 +4,11 @@ import argparse
 import os
 import numpy as np
 from unittest.mock import patch
-from src.dsp.tasks.t2.spectogram import CreateSpectrogramTask
-from src.dsp.tasks.t2.waveform import CreateWaveformTask
-from src.dsp.models.SoundPassportModel import SoundPassport
-from src.dsp.tasks.t1.task1_load_sound import LoadSoundTask
-from tests.helpers.test_sound_helpers import create_simple_mock_sound
+from src.spectogram import CreateSpectrogramTask
+from src.waveform import CreateWaveformTask
+from src.models.SoundPassportModel import SoundPassport
+from src.task1_load_sound import LoadSoundTask
+from tests.utils.test_sound_utils import create_simple_mock_sound
 
 DURATION = 1.2  # Duration of the mock sound in seconds
 SR = 22050  # Sampling rate of the mock sound in Hz
@@ -28,7 +28,7 @@ def test_load_sound(mock_file_path: str = None):
 
 def test_create_waveform(mock_file_path: str = None):
     assert mock_file_path is not None, "Mock file path should not be None"
-    task = CreateWaveformTask(file_path=mock_file_path)
+    task = CreateWaveformTask(file_path=mock_file_path, show_plot=False)
     waveplot = task.run()
 
     # Add assertions to validate the results
@@ -37,7 +37,7 @@ def test_create_waveform(mock_file_path: str = None):
 def test_create_spectrogram(mock_file_path: str = None):
     assert mock_file_path is not None, "Mock file path should not be None"
 
-    task = CreateSpectrogramTask(file_path=mock_file_path)
+    task = CreateSpectrogramTask(file_path=mock_file_path, show_plot=False)
     spectrogram = task.run()
 
     # Add assertions to validate the results

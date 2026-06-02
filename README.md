@@ -27,14 +27,14 @@ Using `librosa`, I loaded a custom voice sample using its native characteristics
 #### 1. Time-Domain Analysis (Waveform)
 The waveform represents air pressure fluctuations captured by the microphone over time. It clearly shows the speech envelopes and silent intervals, but hides the exact pitch and harmonic content.
 
-![Waveform](data/plots/waveform.png)
+![Waveform](reports/figures/waveform.png)
 
 #### 2. Frequency-Domain Analysis (STFT Spectrogram)
 To extract frequency content without losing chronological order, I implemented a **Short-Time Fourier Transform (STFT)**. The linear magnitude values were converted to the log-scale **dBFS (Decibels relative to Full Scale)** to align with human auditory perception. 
 
 The color intensity (using the `magma` colormap) represents energy distribution, highlighting the prominent formants of the human voice.
 
-![Spectrogram](data/plots/spectogram.png)
+![Spectrogram](reports/figures/spectogram.png)
 
 ---
 

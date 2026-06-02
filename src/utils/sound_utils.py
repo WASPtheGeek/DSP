@@ -1,7 +1,7 @@
 import librosa
 import numpy as np
 
-from src.dsp.models.SoundPassportModel import SoundPassport
+from src.models.SoundPassportModel import SoundPassport
 
 # Sound Helper functions for DSP project
 
