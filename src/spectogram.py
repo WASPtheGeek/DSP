@@ -20,6 +20,6 @@ class CreateSpectrogramTask:
         return spectogram
 
 if __name__ == "__main__":
-    file_path = Path("data/processed/tone_4000Hz.wav")
+    file_path = Path("data/processed/superposition.wav")
     task = CreateSpectrogramTask(file_path=file_path, show_plot=True)
     task.run()

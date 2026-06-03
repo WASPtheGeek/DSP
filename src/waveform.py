@@ -21,6 +21,6 @@ class CreateWaveformTask:
         return waveplot
 
 if __name__ == "__main__":
-    file_path = Path("data/raw/DSP1.wav")
+    file_path = Path("data/processed/superposition.wav")
     task = CreateWaveformTask(file_path=file_path, show_plot=True)
     task.run()
