@@ -3,7 +3,7 @@ from pathlib import Path
 from src.utils.sound_utils import SoundHelper
 from src.utils.audio_utils import AudioHelper
 
-class CreateSpectrogramTask:
+class CreateSpectrogram:
     def __init__(self, file_path: str, show_plot: bool = False):
         self.file_path = file_path
         self.show_plot = show_plot
@@ -21,9 +21,10 @@ class CreateSpectrogramTask:
         return spectogram
 
 if __name__ == "__main__":
-    file_path = Path("data/processed/low_pass_filter.wav")
+    # file_path = Path("data/processed/low_pass_filter.wav")
+    file_path = Path("data/processed/low_pass_filter_1.wav")
 
-    task = CreateSpectrogramTask(
+    task = CreateSpectrogram(
         file_path=file_path,
         show_plot=True
     )

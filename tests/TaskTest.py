@@ -4,7 +4,7 @@ import argparse
 import os
 import numpy as np
 from unittest.mock import patch
-from src.spectogram import CreateSpectrogramTask
+from src.spectogram import CreateSpectrogram
 from src.waveform import CreateWaveformTask
 from src.models.SoundPassportModel import SoundPassport
 from src.task1_load_sound import LoadSoundTask
@@ -37,7 +37,7 @@ def test_create_waveform(mock_file_path: str = None):
 def test_create_spectrogram(mock_file_path: str = None):
     assert mock_file_path is not None, "Mock file path should not be None"
 
-    task = CreateSpectrogramTask(file_path=mock_file_path, show_plot=False)
+    task = CreateSpectrogram(file_path=mock_file_path, show_plot=False)
     spectrogram = task.run()
 
     # Add assertions to validate the results
