@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from src.utils.sound_utils import SoundHelper
+from src.utils.audio_utils import AudioHelper
 
 class CreateWaveformTask:
     def __init__(self, file_path: str, show_plot: bool = False):
@@ -11,7 +12,7 @@ class CreateWaveformTask:
         print(f"Loading sound from: {self.file_path}")
         y, sr = SoundHelper.load_sound(self.file_path)
 
-        waveplot = SoundHelper.create_waveform_plot(
+        waveplot = AudioHelper.create_waveform_plot(
             y, 
             sr,
             axis="time",
@@ -21,6 +22,6 @@ class CreateWaveformTask:
         return waveplot
 
 if __name__ == "__main__":
-    file_path = Path("data/processed/superposition.wav")
+    file_path = Path("data/processed/noise_masking.wav")
     task = CreateWaveformTask(file_path=file_path, show_plot=True)
     task.run()

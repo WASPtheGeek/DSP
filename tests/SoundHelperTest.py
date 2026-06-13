@@ -2,9 +2,10 @@ import argparse
 import os
 from time import time
 import numpy as np
-from models.SoundPassportModel import SoundPassport
+from src.models.SoundPassportModel import SoundPassport
 from src.utils.sound_utils import SoundHelper
 from tests.utils.test_sound_utils import create_simple_mock_sound
+from src.utils.audio_utils import AudioHelper
 
 DURATION = 2.0
 SAMPLE_RATE = 22050
@@ -47,7 +48,7 @@ class SoundHelperTest:
         x_label = "234234 asdd"
         y_label = "sdfdf 34"
         title = "Test Waveform"
-        waveplot = SoundHelper.create_waveform_plot(
+        waveplot = AudioHelper.create_waveform_plot(
             y, 
             sr, 
             show_plot=False,

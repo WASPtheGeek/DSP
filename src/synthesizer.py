@@ -1,5 +1,5 @@
 from src.utils.file_utils import save_sound
-from src.utils.audio_utils import AudioHelper
+from src.utils.sound_utils import SoundHelper
 
 class Synthesizer:
     def __init__(self, output_folder: str):
@@ -9,7 +9,7 @@ class Synthesizer:
         tones = [250, 1000, 4000]  # Frequencies in Hz
         for freq in tones:
             print(f"Creating tone with frequency: {freq} Hz")
-            audio_data = AudioHelper.create_tone(
+            audio_data = SoundHelper.create_tone(
                 frequency=freq,
                 sr=16000,
                 duration=1.0,

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from src.utils.sound_utils import SoundHelper
+from src.utils.audio_utils import AudioHelper
 
 class CreateSpectrogramTask:
     def __init__(self, file_path: str, show_plot: bool = False):
@@ -11,7 +12,7 @@ class CreateSpectrogramTask:
         print(f"Loading sound from: {self.file_path}")
         y, sr = SoundHelper.load_sound(self.file_path)
 
-        spectogram = SoundHelper.create_spectrogram_plot(
+        spectogram = AudioHelper.create_spectrogram_plot(
             y, 
             sr,
             show_plot=self.show_plot
@@ -20,6 +21,11 @@ class CreateSpectrogramTask:
         return spectogram
 
 if __name__ == "__main__":
-    file_path = Path("data/processed/superposition.wav")
-    task = CreateSpectrogramTask(file_path=file_path, show_plot=True)
+    file_path = Path("data/processed/low_pass_filter.wav")
+
+    task = CreateSpectrogramTask(
+        file_path=file_path,
+        show_plot=True
+    )
+
     task.run()

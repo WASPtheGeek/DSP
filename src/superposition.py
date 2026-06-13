@@ -2,6 +2,7 @@ import numpy as np
 
 from src.utils.file_utils import save_sound
 from src.utils.audio_utils import AudioHelper
+from src.utils.sound_utils import SoundHelper
 
 class Superposition:
     def __init__(self, output_folder: str):
@@ -13,7 +14,7 @@ class Superposition:
         tones = []
         for freq in tonesHz:
             print(f"Creating tone with frequency: {freq} Hz")
-            audio_data = AudioHelper.create_tone(
+            audio_data = SoundHelper.create_tone(
                 frequency=freq,
                 sr=16000,
                 duration=3.0,
@@ -24,9 +25,9 @@ class Superposition:
         # Sum the tones to create a superposition
         mixed_signal = np.sum(tones, axis=0)
 
-        normalized_signal = AudioHelper.normalize_audio(
+        normalized_signal = SoundHelper.normalize_audio(
             mixed_signal, 
-            target_peak=self.amplitude
+            target_amplitude=self.amplitude
         )
 
         save_sound(
