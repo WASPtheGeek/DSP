@@ -13,11 +13,14 @@ class Audiogram:
     ):
         self.output_folder = Path(output_folder)
         # Most commonly used frequency checkpoints
-        self.standard_frequencies = [250, 500, 1000, 2000, 4000, 8000]
+        self.standard_frequencies = [250, 500, 1000, 2000, 4000] # 8000 doesn't work on home PC
         self.patient_name = patient_name
         self.sr = 44100 # sample rate for tones that will be played
 
-        self.results = {}
+        self.results = {
+            "left": {},
+            "right": {}
+        }
 
     def export_to_txt(self):
         """ Saves the results to a text file """
@@ -32,14 +35,20 @@ class Audiogram:
         file_path = self.output_folder / filename
 
         with open(file_path, "w", encoding="utf-8") as f:
-            f.write(f"=== AUDIOGRAM TEST REPORT ===\n")
+            f.write(f"=== BINAURAL AUDIOGRAM TEST REPORT ===\n")
             f.write(f"Patient Name: {self.patient_name}\n")
             f.write(f"Date/Time: {timestamp}\n")
             f.write(f"=============================\n\n")
-            f.write(f"Frequency (Hz) | Threshold (dB FS)\n")
-            f.write(f"---------------------------------\n")
-            for freq, db in self.results.items():
-                f.write(f"{freq:14d} | {db:15.1f}\n")
+            f.write(f"Frequency (Hz) | Left Ear (dB FS) | Right Ear (dB FS)\n")
+            f.write(f"-----------------------------------------------------\n")
+            for freq in self.standard_frequencies:
+                left_val = self.results["left"].get(freq, float('nan'))
+                right_val = self.results["right"].get(freq, float('nan'))
+                
+                left_str = f"{left_val:16.1f}" if not np.isnan(left_val) else "        N/A     "
+                right_str = f"{right_val:17.1f}" if not np.isnan(right_val) else "        N/A     "
+                
+                f.write(f"{freq:14d} | {left_str} | {right_str}\n")
 
         print(f"\n💾 Results successfully exported to: {file_path}")
 
@@ -47,13 +56,15 @@ class Audiogram:
         self,
         frequency: float,
         db_fs: float,
+        channel: str,
         duration: int = 1.5
     ): 
         """
-        Generates a tone for the specified frequency.
+        Generates a tone for the specified frequency in the specified channel.
 
         frequency(float): the frequency in Hz
         db_fs(float): the volume in db full scale [-90, 0]
+        channel (str): sound (ear) channel - left or right
         duration(float): the sound duration in seconds
 
         Returns:
@@ -64,7 +75,7 @@ class Audiogram:
         if (db_fs < -90 or db_fs > 0):
             print(f"ERROR: db_fs provided is incorrect: {db_fs}")
             
-            return t
+            return np.zeros((len(t), 2))
         
         amplitude = 10 ** (db_fs / 20) # mim 0.0; max 1.0
         tone = amplitude * np.sin(2 * np.pi * frequency * t)
@@ -74,11 +85,19 @@ class Audiogram:
         window = np.ones_like(tone)
         window[:fade_len] = np.linspace(0, 1, fade_len)
         window[-fade_len:] = np.linspace(1, 0, fade_len)
+        tone = tone * window
+        
+        stereo_tone = np.zeros((len(tone), 2))
 
-        return tone * window
+        if channel == "left":
+            stereo_tone[:, 0] = tone
+        elif channel == "right":
+            stereo_tone[:, 1] = tone
+
+        return stereo_tone
 
 
-    def __test_frequency(self, frequency: int):
+    def __test_frequency(self, frequency: int, channel: str):
         """
         Runs the adaptive test (10 down, 5 up) for a single frequency (Houson-Westlake method). 
 
@@ -106,7 +125,7 @@ class Audiogram:
                 print("❌ The sound is too loud! Stopping here.")
                 return 0.0
             
-            tone = self.__generate_tone(frequency, current_db)
+            tone = self.__generate_tone(frequency, current_db, channel=channel)
             sd.play(tone, self.sr)
 
             user_input = input(f"Volume {current_db:5.1f} db FS. Can you hear? (Enter / n):").strip().lower()
@@ -129,6 +148,17 @@ class Audiogram:
                 history.append({'db': current_db, 'heard': False})
                 current_db += 5.0
 
+    def __test_ear(self, channel: str):
+        """
+        channel (str): right or left ear
+        """
+        ear_channel_str = "Left" if channel == "left" else "Right"
+
+        print("\n" + "🎧"*5 + f"Testing {ear_channel_str} ear" + "🎧"*5)
+
+        for freq in self.standard_frequencies:
+            threshold = self.__test_frequency(freq, channel=channel)
+            self.results[channel][freq] = threshold
 
     def run_test(self):
         """
@@ -148,14 +178,25 @@ class Audiogram:
         print(f"Friendly reminder: close windows and doors. Get ready...")
         input(f"Press ENTER to start...")
 
-        for freq in self.standard_frequencies:
-            threshold = self.__test_frequency(freq)
-            self.results[freq] = threshold
+        self.__test_ear(channel="left")
+        
+        print("\n⏸️ Left ear test complete. Take a 5-second breath...")
+        time.sleep(5)
+
+        self.__test_ear(channel="right")
+
+        # for freq in self.standard_frequencies:
+        #     threshold = self.__test_frequency(freq)
+        #     self.results[freq] = threshold
 
         print("\n" + "="*10 + " RESULTS "+ "="*10 + "\n")
+        print("Frequency (Hz) | Left Ear (dB FS) | Right Ear (dB FS)")
+        print("-" * 53)
 
-        for freq, db in self.results.items():
-            print(f"Frequency {freq:4d} Hz: {db:5.1f} dB FS")
+        for freq in self.standard_frequencies:
+            l_res = self.results["left"][freq]
+            r_res = self.results["right"][freq]
+            print(f"{freq:14d} | {l_res:16.1f} | {r_res:17.1f}")
 
         self.export_to_txt()
 
@@ -165,5 +206,7 @@ class Audiogram:
 if __name__ == "__main__":
     output_folder = "reports/audiogram_tests"
 
-    audiogram = Audiogram(output_folder, patient_name="Me Myself evoke")
+    # systemctl --user restart pipewire wireplumber
+
+    audiogram = Audiogram(output_folder, patient_name="Me Myself phonak infinio sphere binaural")
     audiogram.run_test()
