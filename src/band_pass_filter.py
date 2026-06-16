@@ -16,7 +16,7 @@ class BandPassFilter:
         show_plot: bool = False
     ):
         """
-        
+        The band pass filter implementation.
 
         Params:
             file_path: the initial audio signal file path.

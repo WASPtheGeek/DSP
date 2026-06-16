@@ -4,6 +4,10 @@ from src.utils.sound_utils import SoundHelper
 from src.utils.audio_utils import AudioHelper
 
 class CreateSpectrogram:
+    """
+    Creates spectogram using librosa built-in functions.
+    For the manual calculation sample see the SoundHelper.get_mini_stft!
+    """
     def __init__(self, file_path: str, show_plot: bool = False):
         self.file_path = file_path
         self.show_plot = show_plot
