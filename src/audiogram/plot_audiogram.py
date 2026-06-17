@@ -8,6 +8,7 @@ from src.utils.file_utils import read_json_results
 
 @dataclass
 class EarThresholds:
+    """ Ear thresholds interface """
     frequencies: Dict[int, float]
 
     @classmethod
@@ -53,7 +54,13 @@ def plot_audiogram(
     show_plot: bool = False
 ):
     """
-    
+    Plots an audiogram result data.
+
+    Parameters:
+        data: an actual audiogram result with name
+        title (str): the plot title
+        utput_folder (str): The folder where the output file will be saved.
+        show_plot (bool): whether to show the audiogram plot of the final result.
     """
     freq = set()
     
@@ -124,6 +131,7 @@ def plot_audiogram(
     
 
 def read_results(file: str) -> AudiogramResult:
+    """ Read the audiogram results """
     raw_data = read_json_results(file)
 
     return AudiogramResult.from_dict(raw_data)
