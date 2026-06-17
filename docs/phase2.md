@@ -1,6 +1,7 @@
 # 🎧 Home Audio Audiometer with Linux PortAudio (Binaural)
 
 Now, here is a slightly more serious project: a Python application designed to conduct pure-tone threshold audiometry at home using the clinical **Houston-Westlake adaptive method** (10 dB down, 5 dB up). 
+> 🎯 **Core Script:** You can find the complete implementation here: [`src/audiogram/my_home_audiogram.py`](../src/audiogram/my_home_audiogram.py)
 
 This project was built to bypass Linux PulseAudio/PipeWire device lock limitations and benchmark different hearing systems.
 
