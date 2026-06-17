@@ -4,6 +4,8 @@ import time
 import numpy as np
 import sounddevice as sd
 
+from src.utils.file_utils import save_results
+
 
 class Audiogram:
     def __init__(
@@ -22,35 +24,55 @@ class Audiogram:
             "right": {}
         }
 
+    def export_to_json(self):
+        """ Saves the results to a json file """
+        timestamp_str = time.strftime("%Y-%m-%d %H:%M:%S")
+
+        result_data = {
+            "timestamp": timestamp_str,
+            "patient_name": self.patient_name,
+            "results": {
+                "left": self.results["left"],
+                "right": self.results["right"]
+            }
+        }
+
+        save_results(
+            result_data,
+            self.output_folder,
+            f"audiogram_{self.patient_name}",
+            "json"
+        )
+
     def export_to_txt(self):
         """ Saves the results to a text file """
-        if not self.results:
-            print(f"⚠️ No results to export")
-
-            return
         
-        self.output_folder.mkdir(parents=True, exist_ok=True)
         timestamp = time.strftime("%Y%m%d_%H%M%S")
-        filename = f"audiogram_{self.patient_name}_{timestamp}.txt"
-        file_path = self.output_folder / filename
+        report_lines = []
 
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write(f"=== BINAURAL AUDIOGRAM TEST REPORT ===\n")
-            f.write(f"Patient Name: {self.patient_name}\n")
-            f.write(f"Date/Time: {timestamp}\n")
-            f.write(f"=============================\n\n")
-            f.write(f"Frequency (Hz) | Left Ear (dB FS) | Right Ear (dB FS)\n")
-            f.write(f"-----------------------------------------------------\n")
-            for freq in self.standard_frequencies:
-                left_val = self.results["left"].get(freq, float('nan'))
-                right_val = self.results["right"].get(freq, float('nan'))
-                
-                left_str = f"{left_val:16.1f}" if not np.isnan(left_val) else "        N/A     "
-                right_str = f"{right_val:17.1f}" if not np.isnan(right_val) else "        N/A     "
-                
-                f.write(f"{freq:14d} | {left_str} | {right_str}\n")
+        report_lines.append(f"=== BINAURAL AUDIOGRAM TEST REPORT ===\n")
+        report_lines.append(f"Patient Name: {self.patient_name}\n")
+        report_lines.append(f"Date/Time: {timestamp}\n")
+        report_lines.append(f"=============================\n\n")
+        report_lines.append(f"Frequency (Hz) | Left Ear (dB FS) | Right Ear (dB FS)\n")
+        report_lines.append(f"-----------------------------------------------------\n")
+        for freq in self.standard_frequencies:
+            left_val = self.results["left"].get(freq, float('nan'))
+            right_val = self.results["right"].get(freq, float('nan'))
+            
+            left_str = f"{left_val:16.1f}" if not np.isnan(left_val) else "        N/A     "
+            right_str = f"{right_val:17.1f}" if not np.isnan(right_val) else "        N/A     "
+            
+            report_lines.append(f"{freq:14d} | {left_str} | {right_str}\n")
 
-        print(f"\n💾 Results successfully exported to: {file_path}")
+        full_txt_report = "".join(report_lines)
+
+        save_results(
+            data=full_txt_report,
+            output_folder=self.output_folder,
+            base_filename=f"audiogram_{self.patient_name}",
+            extension="txt"
+        )
 
     def __generate_tone(
         self,
@@ -77,7 +99,7 @@ class Audiogram:
             
             return np.zeros((len(t), 2))
         
-        amplitude = 10 ** (db_fs / 20) # mim 0.0; max 1.0
+        amplitude = 10 ** (db_fs / 20) # mim 0.0; max 1.0; gain is non-linear
         tone = amplitude * np.sin(2 * np.pi * frequency * t)
 
         # make sure sound doesn't start and end abruptly
@@ -185,10 +207,6 @@ class Audiogram:
 
         self.__test_ear(channel="right")
 
-        # for freq in self.standard_frequencies:
-        #     threshold = self.__test_frequency(freq)
-        #     self.results[freq] = threshold
-
         print("\n" + "="*10 + " RESULTS "+ "="*10 + "\n")
         print("Frequency (Hz) | Left Ear (dB FS) | Right Ear (dB FS)")
         print("-" * 53)
@@ -199,6 +217,7 @@ class Audiogram:
             print(f"{freq:14d} | {l_res:16.1f} | {r_res:17.1f}")
 
         self.export_to_txt()
+        self.export_to_json()
 
         print("The end.")
 
@@ -208,5 +227,5 @@ if __name__ == "__main__":
 
     # systemctl --user restart pipewire wireplumber
 
-    audiogram = Audiogram(output_folder, patient_name="Me Myself phonak infinio sphere binaural")
+    audiogram = Audiogram(output_folder, patient_name="Me Myself ho hearing aids highest")
     audiogram.run_test()

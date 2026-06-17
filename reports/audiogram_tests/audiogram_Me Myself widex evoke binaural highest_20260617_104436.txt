@@ -1,0 +1,12 @@
+=== BINAURAL AUDIOGRAM TEST REPORT ===
+Patient Name: Me Myself widex evoke binaural highest
+Date/Time: 20260617_104436
+=============================
+
+Frequency (Hz) | Left Ear (dB FS) | Right Ear (dB FS)
+-----------------------------------------------------
+           250 |            -55.0 |             -40.0
+           500 |            -65.0 |             -50.0
+          1000 |            -65.0 |             -55.0
+          2000 |            -65.0 |             -45.0
+          4000 |            -45.0 |             -20.0
